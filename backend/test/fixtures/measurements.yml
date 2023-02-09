@@ -1,0 +1,33 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  timestamp: MyString
+  measure_type: MyString
+  measure_float: 1.5
+  brand: MyString
+  serial_number: MyString
+  establishment_id: 1
+  establishment_name: MyString
+  establishment_city: MyString
+  establishment_postcode: MyString
+  establishment_address: MyString
+  establishment_latitude: 1.5
+  establishment_longitude: 1.5
+  room_id: 1
+  room_name: MyString
+
+two:
+  timestamp: MyString
+  measure_type: MyString
+  measure_float: 1.5
+  brand: MyString
+  serial_number: MyString
+  establishment_id: 1
+  establishment_name: MyString
+  establishment_city: MyString
+  establishment_postcode: MyString
+  establishment_address: MyString
+  establishment_latitude: 1.5
+  establishment_longitude: 1.5
+  room_id: 1
+  room_name: MyString
