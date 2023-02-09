@@ -12,6 +12,12 @@ const TYPES = [
   'VOCT'
 ]
 
+const ROOMS = [
+  'Room B2',
+  'Room 8A',
+  'Room 8F',
+]
+
 async function getMeasurements() {
   return await axios.get(url)
 }
@@ -26,6 +32,7 @@ function App() {
     }]
   })
   const [types, setTypes] = useState(['CO2'])
+  const [rooms, setRooms] = useState(['Room B2'])
 
   useEffect(() => {
     getMeasurements().then(response => setMeasurements(response.data))
@@ -38,47 +45,59 @@ function App() {
         labels: filteredData[0].measurements.map((el) => el.timestamp),
         datasets: filteredData.map(obj => {
           return {
-                  label: obj.type,
+                  label: obj.room_name,
                   data: obj.measurements.map((el) => el.measure_float)
                   }
         })
       })
     }
-  }, [measurements, types])
+  }, [measurements, rooms])
 
   function filterMeasurements() {
-    const filteredMeasurements = measurements.filter(measurement => types.includes(measurement.measure_type) && measurement.room_id === 1)
+    const filteredMeasurements = measurements.filter(measurement => rooms.includes(measurement.room_name) && measurement.measure_type === 'CO2')
 
     const groupedMeasurements = filteredMeasurements.reduce((acc,currentMeasurement) => {
       const findedTypeIndex = acc.findIndex(
-        (obj) => obj.type === currentMeasurement.measure_type
+        (obj) => obj.room_name === currentMeasurement.room_name
       )
       if (findedTypeIndex > -1) {
         acc[findedTypeIndex].measurements.push(currentMeasurement);
       } else {
-        acc.push({ type: currentMeasurement.measure_type, measurements: [currentMeasurement] })
+        acc.push({ room_name: currentMeasurement.room_name, measurements: [currentMeasurement] })
       }
       return acc
     }, [])
     return groupedMeasurements;
   }
 
-  function handleClick(e) {
-    if (types.includes(e.target.value)) {
-      const prevState = types
-      const nextState = prevState.filter(type => type !== e.target.value)
+  function handleClickRooms(e) {
+    if (rooms.includes(e.target.value)) {
+      const prevState = rooms
+      const nextState = prevState.filter(room => room !== e.target.value)
       if (nextState.length > 0) {
-        setTypes(nextState)
+        setRooms(nextState)
       }
     } else {
-      setTypes([...types, e.target.value])
+      setRooms([...rooms, e.target.value])
     }
   }
 
   return (
     <div className="App">
       <select
-        onClick={(e) => handleClick(e)}
+        onClick={(e) => handleClickRooms(e)}
+        name='type'
+        id='type-select'
+      >
+      {ROOMS.map((room, index) =>
+        <option
+          key={index}
+          value={room}>
+          {room}
+        </option>)}
+      </select>
+      {/* <select
+        onClick={(e) => handleClickTypes(e)}
         name='type'
         id='type-select'
       >
@@ -88,7 +107,7 @@ function App() {
           value={type}>
           {type}
         </option>)}
-      </select>
+      </select> */}
       {
         <LineChart chartData={chartData}></LineChart>
       }
