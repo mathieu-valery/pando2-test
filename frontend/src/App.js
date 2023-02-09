@@ -101,7 +101,7 @@ function App() {
 
   function handleClickTypes(e) {
     if (types.includes(e.target.value)) {
-      const prevState = rooms
+      const prevState = types
       const nextState = prevState.filter(type => type !== e.target.value)
       if (nextState.length > 0) {
         setTypes(nextState)
