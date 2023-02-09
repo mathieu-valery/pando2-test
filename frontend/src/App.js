@@ -138,7 +138,7 @@ function App() {
         </option>)}
       </select>
       {
-        chartsData && chartsData.map(obj => (
+        chartsData.map(obj => (
           <LineChart
             key={obj.measure_type}
             chartData={obj.chartData}
