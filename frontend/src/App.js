@@ -24,13 +24,22 @@ async function getMeasurements() {
 
 function App() {
   const [measurements, setMeasurements] = useState(null)
-  const [chartData, setChartData] = useState({
-    labels: [],
-    datasets: [{
-      label: "",
-      data: []
-    }]
-  })
+  const [chartsData, setChartsData] = useState([
+    {
+    measure_type: 'CO2',
+    chartData:
+      {
+        labels: [],
+        datasets: [
+          {
+          label: "",
+          data: []
+          }
+        ]
+      }
+    }
+    ])
+
   const [types, setTypes] = useState(['CO2'])
   const [rooms, setRooms] = useState(['Room B2'])
 
@@ -40,21 +49,29 @@ function App() {
 
   useEffect(() => {
     if (measurements) {
-      const filteredData = filterMeasurements()
-      setChartData({
-        labels: filteredData[0].measurements.map((el) => el.timestamp),
-        datasets: filteredData.map(obj => {
-          return {
-                  label: obj.room_name,
-                  data: obj.measurements.map((el) => el.measure_float)
-                  }
-        })
-      })
-    }
-  }, [measurements, rooms])
+      const newChartsData = types.map(type => {
+        const filteredData = filterMeasurements(type)
 
-  function filterMeasurements() {
-    const filteredMeasurements = measurements.filter(measurement => rooms.includes(measurement.room_name) && measurement.measure_type === 'CO2')
+        const chartData = {
+          labels: filteredData[0].measurements.map((el) => el.timestamp),
+          datasets: filteredData.map(obj => {
+            return {
+                    label: obj.room_name,
+                    data: obj.measurements.map((el) => el.measure_float)
+                    }
+          })
+        }
+        return {
+          measure_type: type,
+          chartData: chartData
+        }
+      })
+      setChartsData(newChartsData)
+    }
+  }, [measurements, rooms, types])
+
+  function filterMeasurements(type) {
+    const filteredMeasurements = measurements.filter(measurement => rooms.includes(measurement.room_name) && measurement.measure_type === type)
 
     const groupedMeasurements = filteredMeasurements.reduce((acc,currentMeasurement) => {
       const findedTypeIndex = acc.findIndex(
@@ -82,6 +99,18 @@ function App() {
     }
   }
 
+  function handleClickTypes(e) {
+    if (types.includes(e.target.value)) {
+      const prevState = rooms
+      const nextState = prevState.filter(type => type !== e.target.value)
+      if (nextState.length > 0) {
+        setTypes(nextState)
+      }
+    } else {
+      setTypes([...types, e.target.value])
+    }
+  }
+
   return (
     <div className="App">
       <select
@@ -96,7 +125,7 @@ function App() {
           {room}
         </option>)}
       </select>
-      {/* <select
+      <select
         onClick={(e) => handleClickTypes(e)}
         name='type'
         id='type-select'
@@ -107,9 +136,15 @@ function App() {
           value={type}>
           {type}
         </option>)}
-      </select> */}
+      </select>
       {
-        <LineChart chartData={chartData}></LineChart>
+        chartsData && chartsData.map(obj => (
+          <LineChart
+            key={obj.measure_type}
+            chartData={obj.chartData}
+            title={obj.measure_type}>
+          </LineChart>
+        ))
       }
     </div>
   );
