@@ -1,0 +1,24 @@
+services:
+  db:
+    image: postgres
+    container_name: postgres
+    volumes:
+      - ./tmp/db:/var/lib/postgresql/pgdata
+    environment:
+      PGDATA: /var/lib/pg_data
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+  backend:
+    build: ./backend
+    command: "./backend/bin/rails server -b '0.0.0.0'"
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=postgres://postgres:password@db:5432/postgres
+    volumes:
+      - .:/backend
