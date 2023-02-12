@@ -22,3 +22,14 @@ services:
       - DATABASE_URL=postgres://postgres:password@db:5432/postgres
     volumes:
       - .:/backend
+  frontend:
+    build:
+      context: frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/usr/src/app
+
