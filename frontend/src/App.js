@@ -2,6 +2,7 @@ import './App.css';
 import axios from "axios"
 import { useState, useEffect } from "react"
 import LineChart from './components/LineChart';
+import Select from 'react-select'
 
 const url = "http://localhost:3000/api/v1/measurements"
 
@@ -40,8 +41,8 @@ function App() {
     }
     ])
 
-  const [types, setTypes] = useState(['CO2'])
-  const [rooms, setRooms] = useState(['Room B2'])
+  const [types, setTypes] = useState([])
+  const [rooms, setRooms] = useState([])
 
   useEffect(() => {
     getMeasurements().then(response => setMeasurements(response.data))
@@ -68,7 +69,7 @@ function App() {
       })
       setChartsData(newChartsData)
     }
-  }, [measurements, rooms, types])
+  }, [rooms, types])
 
   function filterMeasurements(type) {
     const filteredMeasurements = measurements.filter(measurement => rooms.includes(measurement.room_name) && measurement.measure_type === type)
@@ -87,62 +88,34 @@ function App() {
     return groupedMeasurements;
   }
 
-  function handleClickRooms(e) {
-    if (rooms.includes(e.target.value)) {
-      const prevState = rooms
-      const nextState = prevState.filter(room => room !== e.target.value)
-      if (nextState.length > 0) {
-        setRooms(nextState)
-      }
-    } else {
-      setRooms([...rooms, e.target.value])
-    }
+  function handleChange(selectedOptions, name) {
+    const newState = selectedOptions.map((option) =>option.value)
+    if (newState.length === 0) return
+    if (name === 'rooms') setRooms(newState)
+    if (name === 'types') setTypes(newState)
   }
 
-  function handleClickTypes(e) {
-    if (types.includes(e.target.value)) {
-      const prevState = types
-      const nextState = prevState.filter(type => type !== e.target.value)
-      if (nextState.length > 0) {
-        setTypes(nextState)
-      }
-    } else {
-      setTypes([...types, e.target.value])
-    }
-  }
 
   return (
     <div className="App">
       <div className='filters-container'>
         <div className='select-container'>
           <label htmlFor="room-select">Select room to filter:</label>
-          <select
-            onClick={(e) => handleClickRooms(e)}
-            name='type'
-            id='room-select'
-          >
-          {ROOMS.map((room, index) =>
-            <option
-              key={index}
-              value={room}>
-              {room}
-            </option>)}
-          </select>
+          <Select
+            options={ROOMS.map((type) => ({value: type, label: type}))}
+            isMulti
+            data-name={'rooms-select'}
+            onChange={(selectedOptions) => handleChange(selectedOptions, 'rooms')}
+        />
         </div>
         <div className='select-container'>
           <label htmlFor="type-select">Select parameters to filter:</label>
-          <select
-            onClick={(e) => handleClickTypes(e)}
-            name='type'
-            id='type-select'
-          >
-          {TYPES.map((type, index) =>
-            <option
-              key={index}
-              value={type}>
-              {type}
-            </option>)}
-          </select>
+          <Select
+            options={TYPES.map((type) => ({value: type, label: type}))}
+            isMulti
+            name='type-select'
+            onChange={(selectedOptions) => handleChange(selectedOptions, 'types')}
+        />
         </div>
       </div>
       {
