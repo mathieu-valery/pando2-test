@@ -25,21 +25,23 @@ async function getMeasurements() {
 
 function App() {
   const [measurements, setMeasurements] = useState(null)
-  const [chartsData, setChartsData] = useState([
-    {
-    measure_type: 'CO2',
-    chartData:
-      {
-        labels: [],
-        datasets: [
-          {
-          label: "",
-          data: []
-          }
-        ]
-      }
-    }
-    ])
+  const [chartsData, setChartsData] = useState(null)
+    // Expected state for chartsData:
+    // [
+    // {
+    // measure_type: 'CO2',
+    // chartData:
+    //   {
+    //     labels: [],
+    //     datasets: [
+    //       {
+    //       label: "",
+    //       data: []
+    //       }
+    //     ]
+    //   }
+    // }
+    // ]
 
   const [types, setTypes] = useState([])
   const [rooms, setRooms] = useState([])
@@ -95,12 +97,11 @@ function App() {
     if (name === 'types') setTypes(newState)
   }
 
-
   return (
     <div className="App">
       <div className='filters-container'>
         <div className='select-container'>
-          <label htmlFor="room-select">Select room to filter:</label>
+          <label htmlFor="room-select">Filter rooms:</label>
           <Select
             options={ROOMS.map((type) => ({value: type, label: type}))}
             isMulti
@@ -109,7 +110,7 @@ function App() {
         />
         </div>
         <div className='select-container'>
-          <label htmlFor="type-select">Select parameters to filter:</label>
+          <label htmlFor="type-select">filter parameters:</label>
           <Select
             options={TYPES.map((type) => ({value: type, label: type}))}
             isMulti
@@ -119,13 +120,14 @@ function App() {
         </div>
       </div>
       {
-        chartsData.map(obj => (
-          <LineChart
-            key={obj.measure_type}
-            chartData={obj.chartData}
-            title={obj.measure_type}>
-          </LineChart>
-        ))
+        chartsData &&
+          chartsData.map(obj => (
+            <LineChart
+              key={obj.measure_type}
+              chartData={obj.chartData}
+              title={obj.measure_type}>
+            </LineChart>
+          ))
       }
     </div>
   );
