@@ -105,7 +105,7 @@ function App() {
           <Select
             options={ROOMS.map((type) => ({value: type, label: type}))}
             isMulti
-            data-name={'rooms-select'}
+            name='rooms-select'
             onChange={(selectedOptions) => handleChange(selectedOptions, 'rooms')}
         />
         </div>
