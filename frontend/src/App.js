@@ -91,7 +91,7 @@ function App() {
   }
 
   function handleChange(selectedOptions, name) {
-    const newState = selectedOptions.map((option) =>option.value)
+    const newState = selectedOptions.map((option) => option.value)
     if (newState.length === 0) return
     if (name === 'rooms') setRooms(newState)
     if (name === 'types') setTypes(newState)
