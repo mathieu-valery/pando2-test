@@ -43,8 +43,8 @@ function App() {
     // }
     // ]
 
-  const [types, setTypes] = useState([])
-  const [rooms, setRooms] = useState([])
+  const [measureTypes, setMeasureTypes] = useState([])
+  const [roomNames, setRoomNames] = useState([])
 
   useEffect(() => {
     getMeasurements().then(response => setMeasurements(response.data))
@@ -52,8 +52,8 @@ function App() {
 
   useEffect(() => {
     if (measurements) {
-      const newChartsData = types.map(type => {
-        const filteredData = filterMeasurements(type)
+      const newChartsData = measureTypes.map(measureType => {
+        const filteredData = filterMeasurements(measureType)
 
         const chartData = {
           labels: filteredData[0].measurements.map((el) => el.timestamp),
@@ -65,48 +65,48 @@ function App() {
           })
         }
         return {
-          measure_type: type,
+          measure_type: measureType,
           chartData: chartData
         }
       })
       setChartsData(newChartsData)
     }
-  }, [rooms, types])
+  }, [roomNames, measureTypes])
 
-  function filterMeasurements(type) {
-    const filteredMeasurements = measurements.filter(measurement => rooms.includes(measurement.room_name) && measurement.measure_type === type)
+  function filterMeasurements(measureType) {
+    const filteredMeasurements = measurements.filter(measurement => roomNames.includes(measurement.room_name) && measurement.measure_type === measureType)
 
-    const groupedMeasurements = filteredMeasurements.reduce((acc,currentMeasurement) => {
-      const findedTypeIndex = acc.findIndex(
+    const groupedMeasurementsByRoomName = filteredMeasurements.reduce((acc,currentMeasurement) => {
+      const findedRoomNameIndex = acc.findIndex(
         (obj) => obj.room_name === currentMeasurement.room_name
       )
-      if (findedTypeIndex > -1) {
-        acc[findedTypeIndex].measurements.push(currentMeasurement);
+      if (findedRoomNameIndex > -1) {
+        acc[findedRoomNameIndex].measurements.push(currentMeasurement);
       } else {
         acc.push({ room_name: currentMeasurement.room_name, measurements: [currentMeasurement] })
       }
       return acc
     }, [])
-    return groupedMeasurements;
+    return groupedMeasurementsByRoomName;
   }
 
   function handleChange(selectedOptions, name) {
     const newState = selectedOptions.map((option) => option.value)
     if (newState.length === 0) return
-    if (name === 'rooms') setRooms(newState)
-    if (name === 'types') setTypes(newState)
+    if (name === 'roomNames') setRoomNames(newState)
+    if (name === 'measureTypes') setMeasureTypes(newState)
   }
 
   return (
     <div className="App">
       <div className='filters-container'>
         <div className='select-container'>
-          <label htmlFor="room-select">Filter rooms:</label>
+          <label htmlFor="room-select">Filter roomNames:</label>
           <Select
             options={ROOMS.map((type) => ({value: type, label: type}))}
             isMulti
-            name='rooms-select'
-            onChange={(selectedOptions) => handleChange(selectedOptions, 'rooms')}
+            name='roomNames-select'
+            onChange={(selectedOptions) => handleChange(selectedOptions, 'roomNames')}
         />
         </div>
         <div className='select-container'>
@@ -115,7 +115,7 @@ function App() {
             options={TYPES.map((type) => ({value: type, label: type}))}
             isMulti
             name='type-select'
-            onChange={(selectedOptions) => handleChange(selectedOptions, 'types')}
+            onChange={(selectedOptions) => handleChange(selectedOptions, 'measureTypes')}
         />
         </div>
       </div>
