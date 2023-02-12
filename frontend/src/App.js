@@ -113,30 +113,38 @@ function App() {
 
   return (
     <div className="App">
-      <select
-        onClick={(e) => handleClickRooms(e)}
-        name='type'
-        id='type-select'
-      >
-      {ROOMS.map((room, index) =>
-        <option
-          key={index}
-          value={room}>
-          {room}
-        </option>)}
-      </select>
-      <select
-        onClick={(e) => handleClickTypes(e)}
-        name='type'
-        id='type-select'
-      >
-      {TYPES.map((type, index) =>
-        <option
-          key={index}
-          value={type}>
-          {type}
-        </option>)}
-      </select>
+      <div className='filters-container'>
+        <div className='select-container'>
+          <label htmlFor="room-select">Select room to filter:</label>
+          <select
+            onClick={(e) => handleClickRooms(e)}
+            name='type'
+            id='room-select'
+          >
+          {ROOMS.map((room, index) =>
+            <option
+              key={index}
+              value={room}>
+              {room}
+            </option>)}
+          </select>
+        </div>
+        <div className='select-container'>
+          <label htmlFor="type-select">Select parameters to filter:</label>
+          <select
+            onClick={(e) => handleClickTypes(e)}
+            name='type'
+            id='type-select'
+          >
+          {TYPES.map((type, index) =>
+            <option
+              key={index}
+              value={type}>
+              {type}
+            </option>)}
+          </select>
+        </div>
+      </div>
       {
         chartsData.map(obj => (
           <LineChart
