@@ -101,7 +101,7 @@ function App() {
     <div className="App">
       <div className='filters-container'>
         <div className='select-container'>
-          <label htmlFor="room-select">Filter roomNames:</label>
+          <label htmlFor="room-select">Filter rooms:</label>
           <Select
             options={ROOMS.map((type) => ({value: type, label: type}))}
             isMulti
