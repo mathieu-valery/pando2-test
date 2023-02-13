@@ -22,7 +22,7 @@ open frontend app in your browser on localhost:3001
 
 git clone the projet
 
-in ./backend
+### in ./backend
 
 `bundle install`
 
@@ -34,7 +34,7 @@ in ./backend
 
 `rails s`
 
-in ./frontend
+### in ./frontend
 
 `yarn install`
 
