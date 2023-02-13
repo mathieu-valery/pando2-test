@@ -18,7 +18,7 @@ git clone the projet
 
 open frontend app in your browser on localhost:3001
 
-## Setup the app on you machine
+## Setup the app on your machine
 
 git clone the projet
 
