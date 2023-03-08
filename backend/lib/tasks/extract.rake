@@ -9,7 +9,38 @@ namespace :extract do
             csv = CSV.parse(csv_text, :headers => true, :encoding => "ISO-8859-1")
             csv.each do |row|
                 attributes = row.to_hash
-                new_measurement = Measurement.new(attributes)
+                puts attributes
+                puts attributes["serial_number"]
+                instrument = Instrument.find_or_initialize_by(serial_number: attributes["serial_number"])
+                if instrument.new_record?
+                    instrument.brand = attributes["brand"]
+                    instrument.save!
+                    puts 'new instrument created'
+                end
+                establishment = Establishment.find_or_initialize_by(name: attributes["establishment_name"])
+                if establishment.new_record?
+                    establishment.city = attributes["establishment_name"]
+                    establishment.postcode = attributes["establishment_postcode"]
+                    establishment.address = attributes["establishment_address"]
+                    establishment.latitude = attributes["establishment_latitude"]
+                    establishment.longitude = attributes["establishment_longitude"]
+                    establishment.save!
+                    puts 'new establishment created'
+                end
+                room = Room.find_or_initialize_by(name: attributes["room_name"])
+                if establishment.new_record?
+                    room.save!
+                    puts 'new room created'
+                end
+                new_measurement = Measurement.new(
+                    timestamp: attributes["timestamp"],
+                    measure_type: attributes["measure_type"],
+                    measure_float: attributes["measure_float"],
+
+                )
+                new_measurement.instrument = instrument
+                new_measurement.establishment = establishment
+                new_measurement.room = room
                 new_measurement.save!
               end
             puts 'done !'

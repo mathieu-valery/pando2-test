@@ -10,27 +10,49 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_02_08_163216) do
+ActiveRecord::Schema[7.0].define(version: 2023_03_08_000004) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "establishments", force: :cascade do |t|
+    t.string "name"
+    t.string "city"
+    t.string "postcode"
+    t.string "address"
+    t.float "latitude"
+    t.float "longitude"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "instruments", force: :cascade do |t|
+    t.string "brand"
+    t.string "serial_number"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "measurements", force: :cascade do |t|
     t.string "timestamp"
     t.string "measure_type"
     t.float "measure_float"
-    t.string "brand"
-    t.string "serial_number"
-    t.integer "establishment_id"
-    t.string "establishment_name"
-    t.string "establishment_city"
-    t.string "establishment_postcode"
-    t.string "establishment_address"
-    t.float "establishment_latitude"
-    t.float "establishment_longitude"
-    t.integer "room_id"
-    t.string "room_name"
+    t.bigint "instrument_id"
+    t.bigint "establishment_id"
+    t.bigint "room_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["establishment_id"], name: "index_measurements_on_establishment_id"
+    t.index ["instrument_id"], name: "index_measurements_on_instrument_id"
+    t.index ["room_id"], name: "index_measurements_on_room_id"
+  end
+
+  create_table "rooms", force: :cascade do |t|
+    t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "measurements", "establishments"
+  add_foreign_key "measurements", "instruments"
+  add_foreign_key "measurements", "rooms"
 end
