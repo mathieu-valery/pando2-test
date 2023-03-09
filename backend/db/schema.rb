@@ -37,22 +37,22 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_08_000004) do
     t.string "measure_type"
     t.float "measure_float"
     t.bigint "instrument_id"
-    t.bigint "establishment_id"
     t.bigint "room_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["establishment_id"], name: "index_measurements_on_establishment_id"
     t.index ["instrument_id"], name: "index_measurements_on_instrument_id"
     t.index ["room_id"], name: "index_measurements_on_room_id"
   end
 
   create_table "rooms", force: :cascade do |t|
     t.string "name"
+    t.bigint "establishment_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["establishment_id"], name: "index_rooms_on_establishment_id"
   end
 
-  add_foreign_key "measurements", "establishments"
   add_foreign_key "measurements", "instruments"
   add_foreign_key "measurements", "rooms"
+  add_foreign_key "rooms", "establishments"
 end

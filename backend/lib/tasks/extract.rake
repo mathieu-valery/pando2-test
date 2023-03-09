@@ -9,8 +9,6 @@ namespace :extract do
             csv = CSV.parse(csv_text, :headers => true, :encoding => "ISO-8859-1")
             csv.each do |row|
                 attributes = row.to_hash
-                puts attributes
-                puts attributes["serial_number"]
                 instrument = Instrument.find_or_initialize_by(serial_number: attributes["serial_number"])
                 if instrument.new_record?
                     instrument.brand = attributes["brand"]
@@ -27,7 +25,7 @@ namespace :extract do
                     establishment.save!
                     puts 'new establishment created'
                 end
-                room = Room.find_or_initialize_by(name: attributes["room_name"])
+                room = Room.find_or_initialize_by(name: attributes["room_name"], establishment_id: establishment.id)
                 if establishment.new_record?
                     room.save!
                     puts 'new room created'
@@ -39,7 +37,6 @@ namespace :extract do
 
                 )
                 new_measurement.instrument = instrument
-                new_measurement.establishment = establishment
                 new_measurement.room = room
                 new_measurement.save!
               end
