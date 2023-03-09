@@ -1,13 +1,21 @@
 class Api::V1::MeasurementsController < ApplicationController
     def index
-        @measurements = Measurement.all
-        render json: @measurements
-    end
+        if filter_params[:room_names].present? && filter_params[:measure_types].present?
+            @measurements = Measurement.joins(:room).
+            where(room: {name: filter_params[:room_names]}).
+            where(measure_type: filter_params[:measure_types])
 
-    def filter_measurements
-        room_names = filter_params[:room_names]
-        measure_types = filter_params[:measure_types]
-        @measurements = Measurement.where(room_name: room_names, measure_type: measure_types)
+        elsif filter_params[:room_names].present?
+            @measurements = Measurement.joins(:room).
+            where(room: {name: filter_params[:room_names]})
+
+        elsif filter_params[:measure_types].present?
+            @measurements = Measurement.
+            where(measure_type: filter_params[:measure_types])
+
+        else
+            @measurements = Measurement.all
+        end
         render json: @measurements
     end
 
@@ -16,9 +24,8 @@ class Api::V1::MeasurementsController < ApplicationController
     def filter_params
         params.permit(
             :room_names => [],
-            :measure_types => []
+            :measure_types => [],
         )
-      end
-
+    end
 
 end
