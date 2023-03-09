@@ -65,7 +65,7 @@ function App() {
   }, [])
 
   useEffect(() => {
-    if (measurements) {
+    if (measurements && roomNames.length > 0) {
       const newChartsData = measureTypes.map(measureType => {
         const filteredData = filterMeasurements(measureType)
 
