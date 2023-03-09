@@ -3,6 +3,7 @@ import axios from "axios"
 import { useState, useEffect } from "react"
 import LineChart from './components/LineChart';
 import Select from 'react-select'
+import qs from 'qs'
 
 const url = "http://localhost:3000/api/v1/measurements"
 
@@ -19,8 +20,21 @@ const ROOMS = [
   'Room 8F',
 ]
 
-async function getMeasurements() {
-  return await axios.get(url)
+async function getMeasurements(roomNames, measureTypes) {
+
+  return await axios.get(url, {
+    params: {
+      room_names: roomNames,
+      measure_types: measureTypes
+    },
+    // Serializer is used to send query params and filter data in index but I don't use it since its faster to do just one call and fetch all
+    // but if there is a larger amount of data, its possible do one call each time we change the params, but then we need to implement a loader
+    paramsSerializer: {
+      serialize: params => {
+        return qs.stringify(params)
+      }
+    }
+  })
 }
 
 function App() {
@@ -55,6 +69,10 @@ function App() {
       const newChartsData = measureTypes.map(measureType => {
         const filteredData = filterMeasurements(measureType)
 
+        filteredData.forEach((obj) => {
+          obj.measurements.sort((a,b) => new Date(a.timestamp) - new Date(b.timestamp))
+        })
+
         const chartData = {
           labels: filteredData[0].measurements.map((el) => el.timestamp),
           datasets: filteredData.map(obj => {
@@ -71,10 +89,11 @@ function App() {
       })
       setChartsData(newChartsData)
     }
-  }, [roomNames, measureTypes])
+  }, [measureTypes, roomNames])
 
   function filterMeasurements(measureType) {
     const filteredMeasurements = measurements.filter(measurement => roomNames.includes(measurement.room_name) && measurement.measure_type === measureType)
+
 
     const groupedMeasurementsByRoomName = filteredMeasurements.reduce((acc,currentMeasurement) => {
       const findedRoomNameIndex = acc.findIndex(
