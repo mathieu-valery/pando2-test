@@ -10,11 +10,11 @@ class Api::V1::MeasurementsController < ApplicationController
             where(room: {name: filter_params[:room_names]})
 
         elsif filter_params[:measure_types].present?
-            @measurements = Measurement.
+            @measurements = Measurement.eager_load(:room).
             where(measure_type: filter_params[:measure_types])
 
         else
-            @measurements = Measurement.all
+            @measurements = Measurement.eager_load(:room).all
         end
         puts @measurements.count
         render json: @measurements
